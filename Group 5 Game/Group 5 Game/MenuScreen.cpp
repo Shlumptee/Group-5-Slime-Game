@@ -13,9 +13,9 @@ static void DrawMenuText(
     const char* text, int x, int y, int scale,
     unsigned char r, unsigned char g, unsigned char b)
 {
-    static const char* letters = "SLIMEGATRX";
+    static const char* letters = "SLIMEGATRXYNOHD";
 
-    static const unsigned char patterns[10][7] = {
+    static const unsigned char patterns[15][7] = {
         { 15,16,16,14,1,1,30 },    // S
         { 16,16,16,16,16,16,31 },  // L
         { 31,4,4,4,4,4,31 },       // I
@@ -25,7 +25,12 @@ static void DrawMenuText(
         { 14,17,17,31,17,17,17 }, // A
         { 31,4,4,4,4,4,4 },       // T
         { 30,17,17,30,20,18,17 }, // R
-        { 17,17,10,4,10,17,17 }  // X
+        { 17,17,10,4,10,17,17 }, // X
+        { 17,17,10,4,4,4,4 },     // Y
+        { 17,25,21,19,17,17,17 },// N
+        { 14,17,17,17,17,17,14 },// O
+        { 17,17,17,31,17,17,17 },// H
+        { 30,17,17,17,17,17,30 } // D
     };
 
     for (const char* p = text; *p; ++p)
@@ -126,9 +131,9 @@ void MenuScreen::Init()
 }
 
 // Any inputs needed, add here
+
 void MenuScreen::HandleInput()
 {
-
 
     int mx = window.getMouseInWindowX();
     int my = window.getMouseInWindowY();
@@ -136,18 +141,44 @@ void MenuScreen::HandleInput()
     bool mouseDown = window.mouseButtonPressed(
         GamesEngineeringBase::MouseLeft);
 
+
     if (mouseDown && !wasMouseDown)
     {
+  
+        if (mx >= 272 && mx < 412 &&
+            my >= 395 && my < 450)
+        {
+            gameManager.GetDifficulty().SetDifficultyType(
+                DifficultyType::Easy);
+        }
 
-        if (mx >= 362 && mx < 662 &&
-            my >= 440 && my < 500)
+
+        else if (mx >= 442 && mx < 582 &&
+            my >= 395 && my < 450)
+        {
+            gameManager.GetDifficulty().SetDifficultyType(
+                DifficultyType::Medium);
+        }
+
+
+        else if (mx >= 612 && mx < 752 &&
+            my >= 395 && my < 450)
+        {
+            gameManager.GetDifficulty().SetDifficultyType(
+                DifficultyType::Hard);
+        }
+
+
+        else if (mx >= 362 && mx < 662 &&
+            my >= 480 && my < 540)
         {
             gameManager.SetState(GameState::Game);
             return;
         }
 
-        if (mx >= 362 && mx < 662 &&
-            my >= 535 && my < 595)
+
+        else if (mx >= 362 && mx < 662 &&
+            my >= 570 && my < 630)
         {
             gameManager.Quit();
             return;
@@ -155,7 +186,6 @@ void MenuScreen::HandleInput()
     }
 
     wasMouseDown = mouseDown;
-
 }
 
 // Update logic here
@@ -206,13 +236,40 @@ void MenuScreen::Draw(GamesEngineeringBase::Window& window)
         menuSlime.Draw(window, { 0.0f, 0.0f });
     }
 
-    DrawMenuButton(window, 362, 440, 300, 60, 255, 105, 70);
 
-    DrawMenuText(window, "START GAME", 413, 459, 3, 255, 255, 255);
+    // Get the difficulty currently selected by the player
+    DifficultyType selected =
+        gameManager.GetDifficulty().GetDifficultyType();
 
-    DrawMenuButton(window, 362, 535, 300, 60, 53, 53, 53);
+    // EASY
+    DrawMenuButton(window, 272, 395, 140, 55,
+        selected == DifficultyType::Easy ? 255 : 53,
+        selected == DifficultyType::Easy ? 180 : 53,
+        selected == DifficultyType::Easy ? 55 : 53);
 
-    DrawMenuText(window, "EXIT GAME", 431, 554, 3, 255, 255, 255);
+    // NORMAL
+    DrawMenuButton(window, 442, 395, 140, 55,
+        selected == DifficultyType::Medium ? 255 : 53,
+        selected == DifficultyType::Medium ? 180 : 53,
+        selected == DifficultyType::Medium ? 55 : 53);
+
+    // HARD
+    DrawMenuButton(window, 612, 395, 140, 55,
+        selected == DifficultyType::Hard ? 255 : 53,
+        selected == DifficultyType::Hard ? 180 : 53,
+        selected == DifficultyType::Hard ? 55 : 53);
+
+
+    DrawMenuText(window, "EASY", 306, 411, 3, 255, 255, 255);
+    DrawMenuText(window, "NORMAL", 458, 411, 3, 255, 255, 255);
+    DrawMenuText(window, "HARD", 646, 411, 3, 255, 255, 255);
+
+
+    DrawMenuButton(window, 362, 480, 300, 60, 255, 105, 70);
+    DrawMenuText(window, "START GAME", 413, 499, 3, 255, 255, 255);
+
+    DrawMenuButton(window, 362, 570, 300, 60, 53, 53, 53);
+    DrawMenuText(window, "EXIT GAME", 431, 589, 3, 255, 255, 255);
 
 }
 
